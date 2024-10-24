@@ -13,7 +13,7 @@ public class BotCommandFactory {
         this.botHandler = botHandler;
     }
 
-    public static Command getCommand(Update update) {
+    public Command getCommand(Update update) {
         String commandText = update.getMessage().getText();
         switch (commandText) {
             case "/help":
