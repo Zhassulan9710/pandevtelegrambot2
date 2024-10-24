@@ -4,22 +4,24 @@ import com.Pandev.pandevtelegrambot.command.BotCommandDownload;
 import com.Pandev.pandevtelegrambot.command.Command;
 import com.Pandev.pandevtelegrambot.command.BotCommandFactory;
 import com.Pandev.pandevtelegrambot.service.BotService;
-import com.pengrad.telegrambot.model.Update;
-import com.pengrad.telegrambot.request.SendDocument;
-import com.pengrad.telegrambot.request.SendMessage;
+import lombok.extern.slf4j.Slf4j;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
+@Slf4j
 public class BotHandler extends TelegramLongPollingBot {
     private final BotService botService;
 
     public BotHandler(BotService botService) {
         this.botService = botService;
     }
-
 
     @Override
     public String getBotUsername() {
@@ -33,13 +35,18 @@ public class BotHandler extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
-        Command command = BotCommandFactory.getCommand(update, botService); // Передаем botService в фабрику команд
+        Command command = BotCommandFactory.getCommand(update);
         String responseMessage;
 
         if (command != null) {
             responseMessage = command.execute(update);
             if (command instanceof BotCommandDownload) {
-                ByteArrayOutputStream outputStream = ((BotCommandDownload) command).createExcelFile(); // Вызов метода для создания Excel файла
+                ByteArrayOutputStream outputStream = null;
+                try {
+                    outputStream = ((BotCommandDownload) command).createExcelFile();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
                 sendDocument(update.getMessage().getChatId(), outputStream);
             } else {
                 sendTextResponse(update, responseMessage);
@@ -49,7 +56,6 @@ public class BotHandler extends TelegramLongPollingBot {
         }
     }
 
-
     private void sendTextResponse(Update update, String text) {
         SendMessage message = new SendMessage()
                 .chatId(update.getMessage().getChatId())
@@ -57,22 +63,18 @@ public class BotHandler extends TelegramLongPollingBot {
         try {
             execute(message);
         } catch (TelegramApiException e) {
-            e.printStackTrace();
+            log.error("Ошибка при отправке текстового сообщения: ", e);
         }
     }
 
     private void sendDocument(Long chatId, ByteArrayOutputStream outputStream) {
-        // Логика для отправки документа пользователю
         SendDocument sendDocument = new SendDocument();
         sendDocument.setChatId(chatId.toString());
         sendDocument.setDocument(new InputFile(outputStream.toByteArray(), "categories.xlsx"));
         try {
             execute(sendDocument);
         } catch (TelegramApiException e) {
-            e.printStackTrace();
+            log.error("Ошибка при отправке документа: ", e);
         }
     }
-
-
-
 }

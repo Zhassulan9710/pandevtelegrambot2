@@ -17,6 +17,12 @@
 		<java.version>17</java.version>
 		<telegram.bots.version>6.9.7.1</telegram.bots.version>
 	</properties>
+	<repositories>
+		<repository>
+			<id>jitpack.io</id>
+			<url>https://jitpack.io</url>
+		</repository>
+	</repositories>
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -30,6 +36,11 @@
 			<groupId>org.telegram</groupId>
 			<artifactId>telegrambots-spring-boot-starter</artifactId>
 			<version>${telegram.bots.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.telegram</groupId>
+			<artifactId>telegrambots-meta</artifactId>
+			<version>6.9.7.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.poi</groupId>
@@ -55,6 +66,11 @@
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi</artifactId>
 			<version>5.2.3</version>
+		</dependency>
+		<dependency>
+			<groupId>com.pengrad</groupId>
+			<artifactId>telegrambot</artifactId>
+			<version>6.9.0</version>
 		</dependency>
 	</dependencies>
 	<build>

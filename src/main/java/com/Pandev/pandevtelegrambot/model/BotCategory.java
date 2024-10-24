@@ -38,5 +38,4 @@ public class BotCategory {
         children.remove(child);
         child.parent = null;
     }
-
 }

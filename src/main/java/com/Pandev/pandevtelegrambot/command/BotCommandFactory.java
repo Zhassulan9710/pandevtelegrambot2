@@ -7,7 +7,6 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 public class BotCommandFactory {
     private final BotService botService;
     private final BotHandler botHandler;
-
     public BotCommandFactory(BotService botService, BotHandler botHandler) {
         this.botService = botService;
         this.botHandler = botHandler;
@@ -29,7 +28,7 @@ public class BotCommandFactory {
             case "/upload":
                 return new BotCommandUpload(botService, botHandler);
             default:
-                return null; //команда по умолчанию
+                return null;
         }
     }
-}
+
