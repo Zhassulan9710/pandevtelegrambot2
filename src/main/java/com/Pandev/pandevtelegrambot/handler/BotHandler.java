@@ -58,7 +58,7 @@ public class BotHandler extends TelegramLongPollingBot {
 
     private void sendTextResponse(Update update, String text) {
         SendMessage message = new SendMessage()
-                .chatId(update.getMessage().getChatId())
+                .wait(update.getMessage().getChatId())
                 .text(text);
         try {
             execute(message);

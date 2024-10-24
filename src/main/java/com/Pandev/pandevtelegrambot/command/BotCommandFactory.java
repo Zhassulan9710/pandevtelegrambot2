@@ -7,12 +7,13 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 public class BotCommandFactory {
     private final BotService botService;
     private final BotHandler botHandler;
+
     public BotCommandFactory(BotService botService, BotHandler botHandler) {
         this.botService = botService;
         this.botHandler = botHandler;
     }
 
-    public Command getCommand(Update update) {
+    public static Command getCommand(Update update) {
         String commandText = update.getMessage().getText();
         switch (commandText) {
             case "/help":
@@ -31,4 +32,5 @@ public class BotCommandFactory {
                 return null;
         }
     }
+}
 
