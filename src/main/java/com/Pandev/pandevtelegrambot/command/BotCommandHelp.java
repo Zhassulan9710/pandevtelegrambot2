@@ -7,12 +7,12 @@ public class BotCommandHelp implements Command {
     public String execute(Update update) {
         return """
                 Доступные команды:
-                /viewTree - Просмотреть дерево категорий
-                /addElement <название> - Добавить элемент
-                /removeElement <название> - Удалить элемент
-                /download - Скачивание дерева категорий в Excel
-                /upload - Загрузка дерева категорий из Excel
-                /help - Показать список команд""";
+                /help - помощь
+                /addElement <название элемента> - добавить элемент
+                /removeElement <название элемента> - удалить элемент
+                /viewTree - показать дерево категорий
+                /download - скачать дерево в Excel
+                /upload - загрузить дерево из Excel""";
     }
 
 }

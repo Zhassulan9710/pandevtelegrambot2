@@ -1,5 +1,6 @@
 package com.Pandev.pandevtelegrambot.command;
 
+import com.Pandev.pandevtelegrambot.model.BotCategory;
 import com.Pandev.pandevtelegrambot.service.BotService;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
@@ -12,21 +13,13 @@ public class BotCommandAddElement implements Command {
 
     @Override
     public String execute(Update update) {
-        try {
-            String[] parts = update.getMessage().getText().split(" ");
-            if (parts.length == 2) {
-                String name = parts[1];
-                botService.addCategory(name, null); // Корневой элемент
-                return "Элемент добавлен: " + name;
-            } else if (parts.length == 3) {
-                String parentName = parts[1];
-                String childName = parts[2];
-                botService.addCategory(childName, parentName);
-                return "Дочерний элемент добавлен: " + childName + " к родительскому элементу: " + parentName;
-            }
-            return "Неверный формат команды. Используйте: /addElement <название> или /addElement <родительский> <дочерний>";
-        } catch (Exception e) {
-            return "Ошибка при добавлении элемента: " + e.getMessage();
+        String[] commandParts = update.getMessage().getText().split(" ");
+        if (commandParts.length != 2) {
+            return "Неверный формат команды. Используйте: /addElement <название элемента>";
         }
+        String categoryName = commandParts[1];
+        BotCategory category = new BotCategory(categoryName);
+        botService.addCategory(category);
+        return "Элемент \"" + categoryName + "\" добавлен.";
     }
 }

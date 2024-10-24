@@ -2,36 +2,41 @@ package com.Pandev.pandevtelegrambot.model;
 
 import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Setter
-@Getter
 @Entity
+@Table(name = "categories")
 public class BotCategory {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Getter
+    @Column(nullable = false, unique = true)
     private String name;
 
-    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
+    @Getter
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<BotCategory> children = new ArrayList<>();
 
     @ManyToOne
-    @JoinColumn(name = "parend_id")
+    @JoinColumn(name = "parent_id")
     private BotCategory parent;
 
-    public BotCategory(Long id, String name, List<BotCategory> children, BotCategory parent) {
-        this.id = id;
+    public BotCategory(String name) {
         this.name = name;
-        this.children = children;
-        this.parent = parent;
     }
 
-    public BotCategory() {
-
+    public void addChild(BotCategory child) {
+        child.parent = this;
+        children.add(child);
     }
+
+    public void removeChild(BotCategory child) {
+        children.remove(child);
+        child.parent = null;
+    }
+
 }

@@ -10,5 +10,4 @@ public class PanDevTelegramBotApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(PanDevTelegramBotApplication.class, args);
 	}
-
 }
