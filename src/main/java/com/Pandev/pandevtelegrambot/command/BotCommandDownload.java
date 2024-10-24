@@ -1,6 +1,5 @@
 package com.Pandev.pandevtelegrambot.command;
 
-import com.Pandev.pandevtelegrambot.handler.BotHandler;
 import com.Pandev.pandevtelegrambot.model.BotCategory;
 import com.Pandev.pandevtelegrambot.service.BotService;
 import org.apache.poi.ss.usermodel.*;
@@ -13,7 +12,7 @@ import java.io.IOException;
 public class BotCommandDownload implements Command {
     private final BotService botService;
 
-    public BotCommandDownload(BotService botService, BotHandler botHandler) {
+    public BotCommandDownload(BotService botService) {
         this.botService = botService;
     }
 

@@ -41,4 +41,9 @@ public class BotService {
         }
         return sb.toString();
     }
+    public void updateCategories(List<BotCategory> categories) {
+        for (BotCategory category : categories) {
+            botRepository.save(category);
+        }
+    }
 }

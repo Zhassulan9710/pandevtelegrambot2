@@ -1,6 +1,5 @@
 package com.Pandev.pandevtelegrambot.command;
 
-import com.Pandev.pandevtelegrambot.handler.BotHandler;
 import com.Pandev.pandevtelegrambot.model.BotCategory;
 import com.Pandev.pandevtelegrambot.service.BotService;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -8,7 +7,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 public class BotCommandAddElement implements Command {
     private final BotService botService;
 
-    public BotCommandAddElement(BotService botService, BotHandler botHandler) {
+    public BotCommandAddElement(BotService botService) {
         this.botService = botService;
     }
 

@@ -1,13 +1,12 @@
 package com.Pandev.pandevtelegrambot.command;
 
-import com.Pandev.pandevtelegrambot.handler.BotHandler;
 import com.Pandev.pandevtelegrambot.service.BotService;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 public class BotCommandRemoveElement implements Command {
     private final BotService botService;
 
-    public BotCommandRemoveElement(BotService botService, BotHandler botHandler) {
+    public BotCommandRemoveElement(BotService botService) {
         this.botService = botService;
     }
 

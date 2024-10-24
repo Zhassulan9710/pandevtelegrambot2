@@ -12,15 +12,17 @@ import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 @Slf4j
 public class BotHandler extends TelegramLongPollingBot {
     private final BotService botService;
-
+    private final BotCommandFactory botCommandFactory;
     public BotHandler(BotService botService) {
         this.botService = botService;
+        this.botCommandFactory = new BotCommandFactory(botService);
     }
 
     @Override
@@ -35,19 +37,19 @@ public class BotHandler extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
-        Command command = BotCommandFactory.getCommand(update);
+        Command command = botCommandFactory.getCommand(update);
         String responseMessage;
 
         if (command != null) {
             responseMessage = command.execute(update);
             if (command instanceof BotCommandDownload) {
-                ByteArrayOutputStream outputStream = null;
                 try {
-                    outputStream = ((BotCommandDownload) command).createExcelFile();
+                    ByteArrayOutputStream outputStream = ((BotCommandDownload) command).createExcelFile();
+                    sendDocument(update.getMessage().getChatId(), outputStream);
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    log.error("Ошибка при создании Excel файла: ", e);
+                    sendTextResponse(update, "Произошла ошибка при создании документа.");
                 }
-                sendDocument(update.getMessage().getChatId(), outputStream);
             } else {
                 sendTextResponse(update, responseMessage);
             }
@@ -57,9 +59,9 @@ public class BotHandler extends TelegramLongPollingBot {
     }
 
     private void sendTextResponse(Update update, String text) {
-        SendMessage message = new SendMessage()
-                .wait(update.getMessage().getChatId())
-                .text(text);
+        SendMessage message = new SendMessage();
+        message.setChatId(update.getMessage().getChatId().toString());
+        message.setText(text);
         try {
             execute(message);
         } catch (TelegramApiException e) {
@@ -68,9 +70,8 @@ public class BotHandler extends TelegramLongPollingBot {
     }
 
     private void sendDocument(Long chatId, ByteArrayOutputStream outputStream) {
-        SendDocument sendDocument = new SendDocument();
-        sendDocument.setChatId(chatId.toString());
-        sendDocument.setDocument(new InputFile(outputStream.toByteArray(), "categories.xlsx"));
+        InputFile inputFile = new InputFile(new ByteArrayInputStream(outputStream.toByteArray()), "categories.xlsx");
+        SendDocument sendDocument = new SendDocument(chatId.toString(), inputFile);
         try {
             execute(sendDocument);
         } catch (TelegramApiException e) {

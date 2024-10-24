@@ -1,16 +1,13 @@
 package com.Pandev.pandevtelegrambot.command;
 
-import com.Pandev.pandevtelegrambot.handler.BotHandler;
 import com.Pandev.pandevtelegrambot.service.BotService;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 public class BotCommandFactory {
     private final BotService botService;
-    private final BotHandler botHandler;
 
-    public BotCommandFactory(BotService botService, BotHandler botHandler) {
+    public BotCommandFactory(BotService botService) {
         this.botService = botService;
-        this.botHandler = botHandler;
     }
 
     public Command getCommand(Update update) {
@@ -19,15 +16,15 @@ public class BotCommandFactory {
             case "/help":
                 return new BotCommandHelp();
             case "/addElement":
-                return new BotCommandAddElement(botService, botHandler);
+                return new BotCommandAddElement(botService);
             case "/removeElement":
-                return new BotCommandRemoveElement(botService, botHandler);
+                return new BotCommandRemoveElement(botService);
             case "/viewTree":
-                return new BotCommandViewTree(botService, botHandler);
+                return new BotCommandViewTree(botService);
             case "/download":
-                return new BotCommandDownload(botService, botHandler);
+                return new BotCommandDownload(botService);
             case "/upload":
-                return new BotCommandUpload(botService, botHandler);
+                return new BotCommandUpload(botService);
             default:
                 return null;
         }
