@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface BotRepository extends JpaRepository<BotCategory, Long> {
+public interface CategotyRepository extends JpaRepository<BotCategory, Long> {
     Optional<BotCategory> findByName(String name);
 }
+

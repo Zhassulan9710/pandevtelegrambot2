@@ -1,25 +1,24 @@
 package com.Pandev.pandevtelegrambot.command;
+
 import com.Pandev.pandevtelegrambot.model.BotCategory;
-import com.Pandev.pandevtelegrambot.service.BotService;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.telegram.telegrambots.meta.api.objects.Update;
+import com.Pandev.pandevtelegrambot.service.CategoryService;
+import com.Pandev.pandevtelegrambot.service.ExcelService;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
+import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Document;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.List;
 
 public class BotCommandUpload implements Command {
-    private final BotService botService;
+    private final CategoryService categoryService;
+    private final ExcelService excelService;
 
-    public BotCommandUpload(BotService botService) {
-        this.botService = botService;
+    public BotCommandUpload(CategoryService categoryService, ExcelService excelService) {
+        this.categoryService = categoryService;
+        this.excelService = excelService;
     }
 
     @Override
@@ -33,31 +32,17 @@ public class BotCommandUpload implements Command {
 
         try {
             InputStream inputStream = downloadFile(document);
-            List<BotCategory> categories = parseExcelFile(inputStream);
-            botService.updateCategories(categories);
+            List<BotCategory> categories = excelService.parseExcelFile(inputStream);
+            categoryService.updateCategories(categories);
             return "Данные категорий успешно загружены.";
         } catch (Exception e) {
             return "Ошибка при загрузке файла: " + e.getMessage();
         }
     }
+
     // Получение потока данных из загруженного файла
     private InputStream downloadFile(Document document) throws TelegramApiException {
         String fileId = document.getFileId();
         return new InputFile(fileId).getNewMediaStream();
-    }
-
-    private List<BotCategory> parseExcelFile(InputStream inputStream) throws Exception {
-        Workbook workbook = new XSSFWorkbook(inputStream);
-        Sheet sheet = workbook.getSheetAt(0);
-        List<BotCategory> categories = new ArrayList<>();
-
-        for (Row row : sheet) {
-            String categoryName = row.getCell(0).getStringCellValue();
-            BotCategory category = new BotCategory(categoryName);
-            categories.add(category);
-        }
-
-        workbook.close();
-        return categories;
     }
 }

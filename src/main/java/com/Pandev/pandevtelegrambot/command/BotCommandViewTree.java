@@ -1,18 +1,18 @@
 package com.Pandev.pandevtelegrambot.command;
 
-import com.Pandev.pandevtelegrambot.service.BotService;
+import com.Pandev.pandevtelegrambot.service.CategoryService;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 public class BotCommandViewTree implements Command{
 
-    private final BotService botService;
+    private final CategoryService categoryService;
 
-    public BotCommandViewTree(BotService botService) {
-        this.botService = botService;
+    public BotCommandViewTree(CategoryService categoryService) {
+        this.categoryService = categoryService;
     }
 
     @Override
     public String execute(Update update) {
-        return botService.viewCategoriesTree();
+        return categoryService.viewCategoriesTree();
     }
 }

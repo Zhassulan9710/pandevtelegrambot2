@@ -11,3 +11,6 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+bot:
+    name: test_intern_pandev_bot
+    token: 7664107256:AAFkB3sG8AoGJxKcsElp6rLuj3bbn7x-9I4

@@ -1,14 +1,14 @@
 package com.Pandev.pandevtelegrambot.command;
 
 import com.Pandev.pandevtelegrambot.model.BotCategory;
-import com.Pandev.pandevtelegrambot.service.BotService;
+import com.Pandev.pandevtelegrambot.service.CategoryService;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 public class BotCommandAddElement implements Command {
-    private final BotService botService;
+    private final CategoryService categoryService;
 
-    public BotCommandAddElement(BotService botService) {
-        this.botService = botService;
+    public BotCommandAddElement(CategoryService categoryService) {
+        this.categoryService = categoryService;
     }
 
     @Override
@@ -19,7 +19,7 @@ public class BotCommandAddElement implements Command {
         }
         String categoryName = commandParts[1];
         BotCategory category = new BotCategory(categoryName);
-        botService.addCategory(category);
+        categoryService.addCategory(category);
         return "Элемент \"" + categoryName + "\" добавлен.";
     }
 }

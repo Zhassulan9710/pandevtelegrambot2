@@ -3,8 +3,11 @@ package com.Pandev.pandevtelegrambot.handler;
 import com.Pandev.pandevtelegrambot.command.BotCommandDownload;
 import com.Pandev.pandevtelegrambot.command.Command;
 import com.Pandev.pandevtelegrambot.command.BotCommandFactory;
-import com.Pandev.pandevtelegrambot.service.BotService;
+import com.Pandev.pandevtelegrambot.properties.BotProperties;
+import com.Pandev.pandevtelegrambot.service.CategoryService;
+import com.Pandev.pandevtelegrambot.service.ExcelService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -16,23 +19,26 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+@Component
 @Slf4j
 public class BotHandler extends TelegramLongPollingBot {
-    private final BotService botService;
+
+    private final BotProperties botProperties;
     private final BotCommandFactory botCommandFactory;
-    public BotHandler(BotService botService) {
-        this.botService = botService;
-        this.botCommandFactory = new BotCommandFactory(botService);
+
+    public BotHandler(BotProperties botProperties, CategoryService categoryService, ExcelService excelService) {
+        this.botProperties = botProperties;
+        this.botCommandFactory = new BotCommandFactory(categoryService, excelService, this); // Включаем BotHandler в фабрику команд
     }
 
     @Override
     public String getBotUsername() {
-        return "test_intern_pandev_bot";
+        return botProperties.name();
     }
 
     @Override
     public String getBotToken() {
-        return "7664107256:AAGLVuQT5AFHGp9YjeSR45eoB3e2y5POoR4";
+        return botProperties.token();
     }
 
     @Override
@@ -44,9 +50,10 @@ public class BotHandler extends TelegramLongPollingBot {
             responseMessage = command.execute(update);
             if (command instanceof BotCommandDownload) {
                 try {
+                    // Получаем и отправляем файл
                     ByteArrayOutputStream outputStream = ((BotCommandDownload) command).createExcelFile();
                     sendDocument(update.getMessage().getChatId(), outputStream);
-                } catch (IOException e) {
+                } catch (Exception e) {
                     log.error("Ошибка при создании Excel файла: ", e);
                     sendTextResponse(update, "Произошла ошибка при создании документа.");
                 }
@@ -58,6 +65,18 @@ public class BotHandler extends TelegramLongPollingBot {
         }
     }
 
+    // Отправка документа
+    public void sendDocument(Long chatId, ByteArrayOutputStream outputStream) {
+        InputFile inputFile = new InputFile(new ByteArrayInputStream(outputStream.toByteArray()), "categories.xlsx");
+        SendDocument sendDocument = new SendDocument(chatId.toString(), inputFile);
+        try {
+            execute(sendDocument);
+        } catch (TelegramApiException e) {
+            log.error("Ошибка при отправке документа: ", e);
+        }
+    }
+
+    // Отправка текстового сообщения
     private void sendTextResponse(Update update, String text) {
         SendMessage message = new SendMessage();
         message.setChatId(update.getMessage().getChatId().toString());
@@ -66,16 +85,6 @@ public class BotHandler extends TelegramLongPollingBot {
             execute(message);
         } catch (TelegramApiException e) {
             log.error("Ошибка при отправке текстового сообщения: ", e);
-        }
-    }
-
-    private void sendDocument(Long chatId, ByteArrayOutputStream outputStream) {
-        InputFile inputFile = new InputFile(new ByteArrayInputStream(outputStream.toByteArray()), "categories.xlsx");
-        SendDocument sendDocument = new SendDocument(chatId.toString(), inputFile);
-        try {
-            execute(sendDocument);
-        } catch (TelegramApiException e) {
-            log.error("Ошибка при отправке документа: ", e);
         }
     }
 }

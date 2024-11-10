@@ -1,13 +1,13 @@
 package com.Pandev.pandevtelegrambot.command;
 
-import com.Pandev.pandevtelegrambot.service.BotService;
+import com.Pandev.pandevtelegrambot.service.CategoryService;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 public class BotCommandRemoveElement implements Command {
-    private final BotService botService;
+    private final CategoryService categoryService;
 
-    public BotCommandRemoveElement(BotService botService) {
-        this.botService = botService;
+    public BotCommandRemoveElement(CategoryService categoryService) {
+        this.categoryService = categoryService;
     }
 
     @Override
@@ -17,7 +17,7 @@ public class BotCommandRemoveElement implements Command {
             return "Неверный формат команды. Используйте: /removeElement <название элемента>";
         }
         String categoryName = commandParts[1];
-        boolean removed = botService.removeCategory(categoryName);
+        boolean removed = categoryService.removeCategory(categoryName);
         return removed ? "Элемент \"" + categoryName + "\" удален." : "Элемент \"" + categoryName + "\" не найден.";
     }
 }
